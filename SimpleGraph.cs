@@ -6,7 +6,7 @@ namespace AlgorithmsDataStructures2
  public class Vertex<T>
     {
         public T Value;
-        public bool Hit;
+        public bool Hit;   // property of token, which is visited or not
         public Vertex(T val)
         {
             Value = val;
@@ -19,7 +19,7 @@ namespace AlgorithmsDataStructures2
         public Vertex<T>[] vertex;
         public int[,] m_adjacency;
         public int max_vertex;
-        public Vertex<T>[] path;
+        public Vertex<T>[] path;  // path for BFS algorithm 
 
 
         public SimpleGraph(int size)
@@ -33,9 +33,7 @@ namespace AlgorithmsDataStructures2
 
         public void AddVertex(T value)
         {
-            // ваш код добавления новой вершины 
-            // с значением value 
-            // в свободную позицию массива vertex
+            // Add new Vertex into array of Vertexes with specific value
             for (int i = 0; i < vertex.Length; i++)
             {
                 if (vertex[i] == null)
@@ -51,7 +49,7 @@ namespace AlgorithmsDataStructures2
         // в списке  vertex
         public void RemoveVertex(int v)
         {
-            if (v > -1 && v < vertex.Length)
+            if (v > -1 && v < vertex.Length)  
             {
                 if (vertex[v] != null)
                 {
@@ -61,7 +59,7 @@ namespace AlgorithmsDataStructures2
                         if (i == v) continue;
                         else
                         {
-                            if (IsEdge(v, i)) RemoveEdge(v, i);
+                            if (IsEdge(v, i)) RemoveEdge(v, i); // Remove all edges if v and i vertex contains edge
                         }
                     }
                     vertex[v] = null;
@@ -75,16 +73,18 @@ namespace AlgorithmsDataStructures2
             // true если есть ребро между вершинами v1 и v2
             if (v1 < m_adjacency.Length && v2 < m_adjacency.Length && v1 > -1 && v2 > -1)
                 return m_adjacency[v1, v2] == 1 && m_adjacency[v2, v1] == 1;
-            else return false;
+            else return false; 
         }
 
         public void AddEdge(int v1, int v2)
         {
+         
             if (v1 < m_adjacency.Length && v2 < m_adjacency.Length && v1 > -1 && v2 > -1)
             {
-                if (vertex[v1] != null && vertex[v2] != null && !IsEdge(v1, v2))
+                //m_adjacency[v1,v2] and m_adjacency[v2,v1] now equals 0
+                if (vertex[v1] != null && vertex[v2] != null && !IsEdge(v1, v2)) 
                 {
-                    m_adjacency[v1, v2] = 1;
+                    m_adjacency[v1, v2] = 1; 
                     m_adjacency[v2, v1] = 1;
                 }
             }
@@ -95,6 +95,7 @@ namespace AlgorithmsDataStructures2
         {
             if (v1 < m_adjacency.Length && v2 < m_adjacency.Length && v1 > -1 && v2 > -1)
             {
+            //m_adjacency[v1,v2] and m_adjacency[v2,v1] now equals 1
                 if (IsEdge(v1, v2))
                 {
                     m_adjacency[v1, v2] = 0;
@@ -103,11 +104,12 @@ namespace AlgorithmsDataStructures2
             }
         }
 
-        public List<Vertex<T>> DepthFirstSearch(int VFrom, int VTo)
+        public List<Vertex<T>> DepthFirstSearch(int VFrom, int VTo)  // DFS search
         {
-            Reset();
+        // return list of vertex which contains way from VFrom Vertex in vertex Array to VTo vertex in vertex Array 
+            Reset(); // make all vertexes property Hit to false
             Stack<int> stack = new Stack<int>();
-            List<Vertex<T>> list = new List<Vertex<T>>();
+            List<Vertex<T>> list = new List<Vertex<T>>(); // rezult of searching 
             int temp = VFrom;
             vertex[temp].Hit = true;
             stack.Push(temp);
@@ -131,21 +133,22 @@ namespace AlgorithmsDataStructures2
 
                 }
             }
-            list.Clear();
+            list.Clear(); // if we in here -> we don't find a way so return empty list;
             return list;
         }
 
 
         public void Reset()
         {
-            foreach (var item in vertex) item.Hit = false;
+            for(int i=0;i<vertex.Length;i++)
+            {
+              if(vertex[i]!=null) vertex[i].Hit=false;
+            }
         }
 
-        public List<Vertex<T>> BreadthFirstSearch(int VFrom, int VTo)
+        public List<Vertex<T>> BreadthFirstSearch(int VFrom, int VTo) // BFS 
         {
-            // узлы задаются позициями в списке vertex.
-            // возвращает список узлов -- путь из VFrom в VTo
-            // или пустой список, если пути нету
+            // return list of vertex which contains way from VFrom Vertex in vertex Array to VTo vertex in vertex Array
             for (int i = 0; i < vertex.Length; i++)
             {
                 vertex[i].Hit = false;
@@ -169,7 +172,7 @@ namespace AlgorithmsDataStructures2
                     }
                 }
             }
-            // поиск кратчайшего пути
+            // find shortest path 
             List<Vertex<T>> result = new List<Vertex<T>>();
             current = VTo;
             while (path[current] != null)
@@ -183,17 +186,15 @@ namespace AlgorithmsDataStructures2
             return result;
         }
 
-      public List<Vertex<T>> WeakVertices()
-        {
-            int start = IsNotEmpty();
-            if (start != -1)
+      public List<Vertex<T>> WeakVertices() // find all vertexes which are not in triangular
+                                            // not triangular vetrex is a vertex, which hasn't connected neighbours 
+            {  
+            int start = IsNotEmpty(); // check if is graph has any vertex
+            if (start != -1) // graph has at least one vertex
             {
                 
                 List<Vertex<T>> list = new List<Vertex<T>>();
-                for (int i = 0; i < vertex.Length; i++)
-                {
-                    if(vertex[i]!=null) vertex[i].Hit = false;
-                }
+                Reset();
                 Queue<int> trace = new Queue<int>();
                 vertex[start].Hit = true;
                 trace.Enqueue(start);
@@ -217,7 +218,7 @@ namespace AlgorithmsDataStructures2
             return null;
         }
 
-        public int IsNotEmpty()
+        public int IsNotEmpty() // check if graph contains vertex;
         {
             for(int i = 0; i < vertex.Length; i++)
             {
@@ -226,7 +227,7 @@ namespace AlgorithmsDataStructures2
             return -1;
         }
 
-        public bool IsTriangle(int index)
+        public bool IsTriangle(int index) 
         {
             LinkedList<int> temp = new LinkedList<int>();
             for(int i = 0; i < max_vertex; i++)
@@ -235,7 +236,7 @@ namespace AlgorithmsDataStructures2
                 if (IsEdge(i, index)) temp.AddLast(i);
             }
 
-            foreach(int item in temp)
+            foreach(int item in temp) // check every neighbours of neighbours vertex[index] vertex
             {
                 var node = temp.First;
                 while (node != null)
