@@ -183,7 +183,70 @@ namespace AlgorithmsDataStructures2
             return result;
         }
 
+      public List<Vertex<T>> WeakVertices()
+        {
+            int start = IsNotEmpty();
+            if (start != -1)
+            {
+                
+                List<Vertex<T>> list = new List<Vertex<T>>();
+                for (int i = 0; i < vertex.Length; i++)
+                {
+                    if(vertex[i]!=null) vertex[i].Hit = false;
+                }
+                Queue<int> trace = new Queue<int>();
+                vertex[start].Hit = true;
+                trace.Enqueue(start);
+                while (trace.Count != 0)
+                {
+                    int current = trace.Dequeue();
+                    if (!IsTriangle(current)) list.Add(vertex[current]);
+                    for (int i = 0; i <= m_adjacency.GetUpperBound(0); i++)
+                    {
+                        if (m_adjacency[current, i] == 1 && vertex[i].Hit != true)
+                        {
+                            vertex[i].Hit = true;
+                            trace.Enqueue(i);
+                        }
+                    }
+                }
+                return list;
+            }
+           
 
+            return null;
+        }
+
+        public int IsNotEmpty()
+        {
+            for(int i = 0; i < vertex.Length; i++)
+            {
+                if (vertex[i] != null) return i;
+            }
+            return -1;
+        }
+
+        public bool IsTriangle(int index)
+        {
+            LinkedList<int> temp = new LinkedList<int>();
+            for(int i = 0; i < max_vertex; i++)
+            {
+                if (i == index) continue;
+                if (IsEdge(i, index)) temp.AddLast(i);
+            }
+
+            foreach(int item in temp)
+            {
+                var node = temp.First;
+                while (node != null)
+                { 
+                    if (IsEdge(item, node.Value)) return true;
+                    node = node.Next;
+                }
+            }
+
+            return false;
+        }
 
 
 
