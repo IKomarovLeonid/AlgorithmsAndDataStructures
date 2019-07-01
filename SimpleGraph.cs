@@ -151,7 +151,7 @@ namespace AlgorithmsDataStructures2
                 vertex[i].Hit = false;
                 path[i] = null;
             }
-            // обход в ширину
+            
             Queue<int> trace = new Queue<int>();
             int current = VFrom;
             vertex[current].Hit = true;
@@ -179,7 +179,7 @@ namespace AlgorithmsDataStructures2
             }
             result.Add(vertex[VFrom]);
             result.Reverse();
-            if (result.Count == 1) result.Clear(); // если в списке одна вершина, значит пути не существует и список надо обнулить
+            if (result.Count == 1) result.Clear(); 
             return result;
         }
 
